@@ -159,13 +159,14 @@ function convertNumberToString(numberStr) {
   let isNegative = false;
   let isDecimal = false;
 
-  let str = numberStr;
+  const str = numberStr;
   if (str[0] === '-') {
     isNegative = true;
-    str = str.substring(1);
+    result += 'minus ';
   }
-
-  for (let i = 0; i < str.length; i += 1) {
+  let i = 0;
+  if (isNegative) i = 1;
+  for (i; i < str.length; i += 1) {
     const char = str[i];
     switch (char) {
       case '0':
@@ -215,12 +216,8 @@ function convertNumberToString(numberStr) {
     }
   }
 
-  if (isNegative) {
-    result = `minus ${result}`;
-  }
-
   let hasSpace = false;
-  for (let i = 0; i < result.length; i += 1) {
+  for (i = 0; i < result.length; i += 1) {
     if (result[i] === ' ') {
       hasSpace = true;
       break;
@@ -463,23 +460,30 @@ function shuffleChar(/* str, iterations */) {
  * @returns {number} The nearest larger number, or original number if none exists.
  */
 function getNearestBigger(number) {
-  const digits = number.toString().split('').map(Number);
-  const { length } = digits;
+  const nums = Array.from(number.toString());
+  const n = nums.slice(-3);
+  n.forEach((el) => Number(el));
+  const { length } = nums;
   let i = length - 2;
-  while (i >= 0 && digits[i] >= digits[i + 1]) {
+  while (i >= 0 && n[i] >= n[i + 1]) {
     i -= 1;
   }
   if (i === -1) {
     return number;
   }
+
   let j = length - 1;
-  while (j > i && digits[j] <= digits[i]) {
+  while (j > i && n[j] <= n[j + 1]) {
     j -= 1;
   }
-  [digits[i], digits[j]] = [digits[j], digits[i]];
-  const sorted = digits.splice(i + 1).sort((a, b) => a - b);
-  digits.push(...sorted);
-  return Number(digits.join(''));
+  [n[i], n[j]] = [n[j], n[i]];
+  const sort = n.splice(i + 1).sort((a, b) => a - b);
+  const res = Number(
+    nums.slice(0, length - 3).join('') +
+      n.slice(0, i + 1).join('') +
+      sort.join('')
+  );
+  return res;
 }
 
 module.exports = {
